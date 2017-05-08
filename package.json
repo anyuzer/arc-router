@@ -1,0 +1,32 @@
+{
+  "name": "arc-router",
+  "version": "1.0.0",
+  "description": "A purely functional router for independently evaluating a path against a list of routes",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage",
+    "test:watch": "jest --watchAll"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anyuzer/arc-router.git"
+  },
+  "keywords": [
+    "router",
+    "arc"
+  ],
+  "author": "Ian Reid",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anyuzer/arc-router/issues"
+  },
+  "homepage": "https://github.com/anyuzer/arc-router#readme",
+  "devDependencies": {
+    "jest": "^20.0.0"
+  },
+  "dependencies": {
+    "arc-is": "^1.0.5",
+    "arc-object": "^1.5.0",
+    "arc-reg-exp": "^1.0.0"
+  }
+}
