@@ -1,4 +1,4 @@
-# arc-router
+# arc-router [![Build Status](https://travis-ci.org/anyuzer/arc-router.svg?branch=master)](https://travis-ci.org/anyuzer/arc-router)
 A purely functional router for independently evaluating a path against a list of routes
 
 ## Install
