@@ -324,7 +324,7 @@ class ArcRouter{
 
     _reduceByHighestValue(_index,_reduceByKey){
         let highValue = 0;
-        _index.each((_key,_obj)=>{
+        _index.forEach((_obj,_key)=>{
             if(_obj[_reduceByKey] > highValue){
                 highValue = _obj[_reduceByKey];
             }

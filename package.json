@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "arc-is": "^1.0.5",
-    "arc-object": "^1.5.0",
+    "arc-object": "^2.0.0",
     "arc-reg-exp": "^1.0.0"
   }
 }
