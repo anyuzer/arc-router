@@ -129,8 +129,8 @@ class ArcRouter{
 
     _processRoute(_routeObj,_routeArray,_uriArray,_gobbleRemaining){
         let match = false;
-        let routeChunk = _routeArray.shift();
-        let route = _uriArray.shift();
+        let routeChunk = _routeArray.shift() || '';
+        let route = _uriArray.shift() || '';
         let recursive = false;
         let storeAsArray = false;
         let patMatch = [];
@@ -161,6 +161,7 @@ class ArcRouter{
             key = replacedRoute.substr(2);
             storeAsArray = true;
         }
+
 
         let increment = false;
 
