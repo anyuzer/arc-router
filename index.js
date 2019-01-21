@@ -52,10 +52,6 @@ class ArcRouter{
         throw new TypeError('Router.setMap only accepts valid objects');
     }
 
-    addFilter(_name,_Filter){
-        //TODO: Previously had complex evaluation objects that could be used. Will add back.
-    }
-
     travel(_route){
         const index = {};
         const route = _route;
@@ -97,8 +93,9 @@ class ArcRouter{
             _index[_route].match = _matchedView;
             _index[_route].routeWeight = this._getRouteWeight(_route);
             _matchedViews[_route] = _index[_route];
+            return _matchedViews;
         },new ArcObject);
-
+        
         matchedIndex = this._reduceByHighestValue(matchedIndex,'tokensMatched');
         if(matchedIndex.count() === 1){
             return matchedIndex.pop();
@@ -169,14 +166,6 @@ class ArcRouter{
             //Explicit
             case '!':
                 increment = this._checkExplicit(_routeObj,route, key,storeAsArray);
-                break;
-
-            //Filter
-            case '+':
-                patMatch = (new ArcRegExp(/([^\(]*)\(([^\)]*)\)/)).exec(key);
-                if(patMatch[1] && patMatch[2]){
-                    increment = this._checkFilter(_routeObj,route,patMatch[1],patMatch[2],storeAsArray);
-                }
                 break;
 
             //Numeric
@@ -277,10 +266,6 @@ class ArcRouter{
         return false;
     }
 
-    _checkFilter(_routeObj,_route,_key,_filterName,_storeAsArray){
-        //TODO: this
-    }
-
     _assignToKey(_routeObj,_key,_val,_storeAsArray){
         if(_storeAsArray){
             let currentStack = (is(_routeObj[_key]) === 'array' ? _routeObj[_key] : []);
@@ -297,7 +282,6 @@ class ArcRouter{
         this._trimAndBreakRoute(_routeStr).forEach((_chunk)=>{
             const rule = (_chunk.charAt(0) === _chunk.charAt(1) ? _chunk.substr(0,2) : _chunk.charAt(0));
             switch(rule){
-                case '!':   weight += 7; break;
                 case '!!':  weight += 6; break;
                 case ':':   weight += 5; break;
                 case '::':  weight += 4; break;
@@ -305,6 +289,10 @@ class ArcRouter{
                 case '##':  weight += 2; break;
                 case '*':   weight += 1; break;
                 case '**':  weight += 0; break;
+                case '!':
+                default:
+                    weight += 7;
+                    break;
             }
         });
         return weight;
