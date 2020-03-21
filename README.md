@@ -64,6 +64,18 @@ Create a new `ArcRouter` object. Requires `new`, routeMap is optional in the con
 ### .setMap(routeMap:Object)
 Take an object in the form of {[ROUTE]:[MATCH_NAME]} and evaluate against it
 
+### .setStripQueryParams(value:Boolean)
+Sets whether or not the router should strip patterns that look like URL query params from a route being traveled. (ie `?var=1`). By default set to `TRUE`
+
+### .setStripAnchor(value:Boolean)
+Sets whether or not the router should strip patterns that look like a URL anchor from a route being traveled (ie. `#someAnchor`). By default set to `TRUE`
+
+### .setCaptureQuery(value:Boolean)
+Sets whether or not query parameter like patterns should be captured, parsed and returned as part of the routeData object on return. By default set to `FALSE`. If set to `TRUE` query parameters will be appended to the routeData object as a `{key:val}` object under `query`
+
+### .setCaptureAnchor(value:Boolean)
+Sets whether or not query parameter like patterns should be captured, parsed and returned as part of the routeData object on return. By default set to `FALSE`. If set to `TRUE` any value after a URL `#` will become the value of `anchor` on the RouteData object.
+
 ### .travel(routeString:String)
 Accept a string to travel the route map with. Travel returns a routeData object, binding variables based on the map route patterns.
 

@@ -1,3 +1,4 @@
+const querystring = require('querystring');
 const is = require('arc-is');
 const ArcRegExp = require('arc-reg-exp');
 const ArcObject = require('arc-object');
@@ -39,6 +40,10 @@ const bindPattern = new ArcRegExp(/(\[[^\]]*\])\/|(\[[^\]]*\])$/);
 
 class ArcRouter{
     constructor(_routeMap){
+        this.stripQueryParams = true;
+        this.stripAnchors = true;
+        this.captureQuery = false;
+        this.captureAnchor = false;
         if(_routeMap){
             this.setMap(_routeMap);
         }
@@ -52,9 +57,25 @@ class ArcRouter{
         throw new TypeError('Router.setMap only accepts valid objects');
     }
 
+    setStripQueryParams(_stripQueryParams) {
+        this.stripQueryParams = _stripQueryParams;
+    }
+
+    setStripAnchors(_stripAnchors) {
+        this.stripAnchors = _stripAnchors;
+    }
+
+    setCaptureQuery(_captureQuery) {
+        this.captureQuery = _captureQuery;
+    }
+
+    setCaptureAnchor(_captureAnchor) {
+        this.captureAnchor = _captureAnchor;
+    }
+
     travel(_route){
         const index = {};
-        const route = _route;
+        const { route, queryCapture, anchorCapture } = this._stripRoute(_route);
         const uriArray = this._trimAndBreakRoute(route);
         const routeMatches = this.routeMap.reduce((_routeMatches,_view,_route)=>{
             const routeArray = this._trimAndBreakRoute(_route);
@@ -75,10 +96,55 @@ class ArcRouter{
             delete routeData.weight;
             delete routeData.tokensMatched;
             delete routeData.routeWeight;
+
+            if(this.captureQuery) {
+                routeData.query = queryCapture;
+            }
+            if(this.captureAnchor) {
+                routeData.anchor = anchorCapture;
+            }
             return routeData;
         }
 
         return { match: false };
+    }
+
+    _stripRoute(_route) {
+        let route = _route;
+        let queryCapture = false;
+        let anchorCapture = false;
+        if(this.stripQueryParams) {
+            const queryRX = new ArcRegExp(/([^\?]*)\?{0,1}(.*)/);
+            route = queryRX.exec(route)[1];
+            if(this.captureQuery) {
+                queryCapture = this._queryParse(_route)
+            }
+        }
+        if(this.stripAnchors) {
+            const anchorRX = new ArcRegExp(/([^\#]*)\#{0,1}([^\?]*)\?{0,1}(.*)/);
+            const anchorParsed = anchorRX.exec(route);
+            route = `${anchorParsed[1]}${anchorParsed[3] ? `?${anchorParsed[3]}` : ''}`;
+            if(anchorParsed[2]) {
+                anchorCapture = anchorParsed[2];
+            }
+        }
+        return { route, queryCapture, anchorCapture }
+    }
+
+    _queryParse(_route) {
+        let urlSplit = _route.split("?");
+        urlSplit.shift();
+        urlSplit = decodeURI(urlSplit.join("?")).toLowerCase();
+        urlSplit = ArcObject.wrap(querystring.parse(urlSplit));
+        urlSplit = urlSplit.reduce((_params, _val, _key)=>{
+            try{
+                _params[_key] = JSON.parse(_val);
+            } catch (_e) {
+                _params[_key] = _val;
+            }
+            return _params;
+        }, {});
+        return urlSplit || {};
     }
 
     _resolveViews(_routeMatches,_index){
@@ -95,7 +161,7 @@ class ArcRouter{
             _matchedViews[_route] = _index[_route];
             return _matchedViews;
         },new ArcObject);
-        
+
         matchedIndex = this._reduceByHighestValue(matchedIndex,'tokensMatched');
         if(matchedIndex.count() === 1){
             return matchedIndex.pop();
