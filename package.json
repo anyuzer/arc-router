@@ -22,11 +22,11 @@
   },
   "homepage": "https://github.com/anyuzer/arc-router#readme",
   "devDependencies": {
-    "jest": "^25.1.0"
+    "jest": "^27.5.1"
   },
   "dependencies": {
-    "arc-is": "^1.0.5",
-    "arc-object": "^2.0.0",
-    "arc-reg-exp": "^1.0.0"
+    "arc-is": "^1.0.8",
+    "arc-object": "^3.1.0",
+    "arc-reg-exp": "^1.0.1"
   }
 }
