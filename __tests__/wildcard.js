@@ -10,6 +10,7 @@ describe('ArcRouter wildcard pattern matching',()=>{
         '/2*anything4/*id':'anything4'
     };
     TestRouter = new ArcRouter(routeMap);
+    TestRouter.setCapturePath(false);
 
     it('Should return a routeData object with a match based on a single wildcard route',()=>{
         const routeData = TestRouter.travel('/key');

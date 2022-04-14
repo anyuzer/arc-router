@@ -5,6 +5,7 @@ describe('ArcRouter route stripping ',()=>{
         '/*test/*end':'matched',
     };
     TestRouter = new ArcRouter(routeMap);
+    TestRouter.setCapturePath(false);
 
     it('Should return a routeData object that excludes the anchor and query params on the end variable',()=>{
         const routeData = TestRouter.travel('/uri1/complex#anchor?query=true');

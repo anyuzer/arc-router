@@ -6,6 +6,7 @@ describe('ArcRouter regEx pattern matching',()=>{
         '/::fileNames([^\.]*\.jpg)':'images'
     };
     TestRouter = new ArcRouter(routeMap);
+    TestRouter.setCapturePath(false);
 
     it('Should return a routeData object with a match based on a single regExp match',()=>{
         const routeData = TestRouter.travel('/beach.jpg');

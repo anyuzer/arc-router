@@ -11,6 +11,8 @@ describe('ArcRouter conflict tests',()=>{
         };
 
         TestRouter = new ArcRouter(routeMap);
+        TestRouter.setCapturePath(false);
+
         expect(TestRouter.travel('/explicit').match).toEqual("explicit1");
         expect(TestRouter.travel('/explicit/things').match).toEqual("explicit2");
         expect(TestRouter.travel('/stuff').match).toEqual("wildcard1");
@@ -24,6 +26,8 @@ describe('ArcRouter conflict tests',()=>{
         };
 
         TestRouter = new ArcRouter(routeMap);
+        TestRouter.setCapturePath(false);
+
         expect(TestRouter.travel('/1/2').match).toEqual("nums");
     });
 
@@ -34,6 +38,8 @@ describe('ArcRouter conflict tests',()=>{
         };
 
         TestRouter = new ArcRouter(routeMap);
+        TestRouter.setCapturePath(false);
+
         expect(TestRouter.travel('/explicit/explicit').match).toEqual("explicit");
     });
 

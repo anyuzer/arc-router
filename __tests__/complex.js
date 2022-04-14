@@ -7,6 +7,7 @@ describe('ArcRouter complex tests',()=>{
             '/!wallpaper/**filePath[/]/:fileName([^\.]*\.jpg)':'wallpaper'
         };
         TestRouter = new ArcRouter(routeMap);
+        TestRouter.setCapturePath(false);
         const routeData = TestRouter.travel('/wallpaper/2016/australia/sydney/beach.jpg');
         expect(routeData).toEqual({
             'match':'wallpaper',
@@ -20,6 +21,7 @@ describe('ArcRouter complex tests',()=>{
     it('Should return a match of true',()=>{
         routeMap = { '/':true };
         TestRouter = new ArcRouter(routeMap);
+        TestRouter.setCapturePath(false);
         const routeData = TestRouter.travel('/');
         expect(routeData.match).toEqual(true);
     });

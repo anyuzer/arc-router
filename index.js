@@ -44,9 +44,14 @@ class ArcRouter{
         this.stripAnchors = true;
         this.captureQuery = false;
         this.captureAnchor = false;
+        this.capturePath = true;
         if(_routeMap){
             this.setMap(_routeMap);
         }
+    }
+
+    setCapturePath(_bool) {
+        this.capturePath = _bool;
     }
 
     setMap(_routeMap){
@@ -102,6 +107,9 @@ class ArcRouter{
             }
             if(this.captureAnchor) {
                 routeData.anchor = anchorCapture;
+            }
+            if(this.capturePath) {
+                routeData.path = _route;
             }
             return routeData;
         }

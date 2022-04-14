@@ -9,6 +9,7 @@ describe('ArcRouter numeric pattern matching',()=>{
         '/##numeric3/!yes':'numeric3'
     };
     TestRouter = new ArcRouter(routeMap);
+    TestRouter.setCapturePath(false);
 
     it('Should return a routeData object with a match based on a single numeric route',()=>{
         const routeData = TestRouter.travel('/1');
