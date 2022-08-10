@@ -52,4 +52,18 @@ describe('ArcRouter route stripping ',()=>{
         });
     });
 
+    it('Should return a routeData has query captured and maintains case sensitivity',()=>{
+        TestRouter.setStripQueryParams(true);
+        TestRouter.setCaptureQuery(true);
+        TestRouter.setCaptureQueryCaseSensitive(true);
+        const routeData = TestRouter.travel('/uri1/complex?caseQuery1=true&caseQuery2=false');
+        expect(routeData).toEqual({
+            'match':'matched',
+            'test':'uri1',
+            'end': 'complex',
+            'query': { "caseQuery1": true, "caseQuery2": false },
+            'anchor': false
+        });
+    });
+
 });

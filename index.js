@@ -43,6 +43,7 @@ class ArcRouter{
         this.stripQueryParams = true;
         this.stripAnchors = true;
         this.captureQuery = false;
+        this.captureQueryCaseSensitive = false;
         this.captureAnchor = false;
         this.capturePath = true;
         if(_routeMap){
@@ -72,6 +73,10 @@ class ArcRouter{
 
     setCaptureQuery(_captureQuery) {
         this.captureQuery = _captureQuery;
+    }
+
+    setCaptureQueryCaseSensitive(_bool) {
+        this.captureQueryCaseSensitive = !!_bool;
     }
 
     setCaptureAnchor(_captureAnchor) {
@@ -142,9 +147,12 @@ class ArcRouter{
     _queryParse(_route) {
         let urlSplit = _route.split("?");
         urlSplit.shift();
-        urlSplit = decodeURI(urlSplit.join("?")).toLowerCase();
+        urlSplit = decodeURI(urlSplit.join("?"));
+        if(!this.captureQueryCaseSensitive){
+            urlSplit = urlSplit.toLowerCase();
+        }
         urlSplit = ArcObject.wrap(querystring.parse(urlSplit));
-        urlSplit = urlSplit.reduce((_params, _val, _key)=>{
+        urlSplit = urlSplit.reduce((_params, _val, _key) => {
             try{
                 _params[_key] = JSON.parse(_val);
             } catch (_e) {
