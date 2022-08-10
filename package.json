@@ -1,6 +1,6 @@
 {
   "name": "arc-router",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A purely functional router for independently evaluating a path against a list of routes",
   "main": "index.js",
   "scripts": {
