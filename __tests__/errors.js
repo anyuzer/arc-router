@@ -1,4 +1,4 @@
-const ArcRouter = require('../index');
+import ArcRouter from "../index.js";
 
 describe('ArcRouter Errors',()=>{
     it('should throw a TypeError if a value is passed into the constructor that is not an object',()=>{

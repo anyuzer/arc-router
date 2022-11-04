@@ -1,7 +1,7 @@
-const querystring = require('querystring');
-const is = require('arc-is');
-const ArcRegExp = require('arc-reg-exp');
-const ArcObject = require('arc-object');
+import querystring from 'querystring';
+import is from 'arc-is';
+import ArcRegExp from "arc-reg-exp";
+import ArcObject from "arc-object";
 
 const bindPattern = new ArcRegExp(/(\[[^\]]*\])\/|(\[[^\]]*\])$/);
 
@@ -409,4 +409,4 @@ class ArcRouter{
     }
 }
 
-module.exports = ArcRouter;
+export default ArcRouter;

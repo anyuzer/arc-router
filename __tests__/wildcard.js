@@ -1,4 +1,4 @@
-const ArcRouter = require('../index');
+import ArcRouter from "../index.js";
 
 describe('ArcRouter wildcard pattern matching',()=>{
     let routeMap, TestRouter;

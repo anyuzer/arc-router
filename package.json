@@ -3,9 +3,10 @@
   "version": "2.1.0",
   "description": "A purely functional router for independently evaluating a path against a list of routes",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "jest --coverage",
-    "test:watch": "jest --watchAll"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll"
   },
   "repository": {
     "type": "git",
@@ -22,11 +23,11 @@
   },
   "homepage": "https://github.com/anyuzer/arc-router#readme",
   "devDependencies": {
-    "jest": "^27.5.1"
+    "jest": "^29.2.2"
   },
   "dependencies": {
-    "arc-is": "^1.0.8",
-    "arc-object": "^3.1.2",
-    "arc-reg-exp": "^1.0.1"
+    "arc-is": "^2.0.0",
+    "arc-object": "^4.0.0",
+    "arc-reg-exp": "^2.0.0"
   }
 }

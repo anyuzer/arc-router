@@ -1,4 +1,5 @@
-const ArcRouter = require('../index');
+import ArcRouter from "../index.js";
+
 describe('ArcRouter regEx pattern matching',()=>{
     let routeMap,TestRouter;
     routeMap = {
