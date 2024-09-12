@@ -167,6 +167,7 @@ class ArcRouter{
         if(_routeMatches.count() === 1){
             return _routeMatches.reduce((_last,_matchedView,_route)=>{
                 _index[_route].match = _matchedView;
+                _index[_route].route = _route;
                 return _index[_route];
             });
         }
@@ -174,6 +175,7 @@ class ArcRouter{
         let matchedIndex = _routeMatches.reduce((_matchedViews,_matchedView,_route)=>{
             _index[_route].match = _matchedView;
             _index[_route].routeWeight = this._getRouteWeight(_route);
+            _index[_route].route = _route;
             _matchedViews[_route] = _index[_route];
             return _matchedViews;
         },new ArcObject);
