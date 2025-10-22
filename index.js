@@ -39,20 +39,20 @@ const bindPattern = new ArcRegExp(/(\[[^\]]*\])\/|(\[[^\]]*\])$/);
  */
 
 class ArcRouter{
+    #stripQueryParams = true;
+    #stripAnchors = true;
+    #captureQuery = true;
+    #captureQueryCaseSensitive = true;
+    #captureAnchor = false;
+    #capturePath = true;
     constructor(_routeMap){
-        this.stripQueryParams = true;
-        this.stripAnchors = true;
-        this.captureQuery = false;
-        this.captureQueryCaseSensitive = false;
-        this.captureAnchor = false;
-        this.capturePath = true;
         if(_routeMap){
             this.setMap(_routeMap);
         }
     }
 
     setCapturePath(_bool) {
-        this.capturePath = _bool;
+        this.#capturePath = _bool;
     }
 
     setMap(_routeMap){
@@ -64,56 +64,56 @@ class ArcRouter{
     }
 
     setStripQueryParams(_stripQueryParams) {
-        this.stripQueryParams = _stripQueryParams;
+        this.#stripQueryParams = _stripQueryParams;
     }
 
     setStripAnchors(_stripAnchors) {
-        this.stripAnchors = _stripAnchors;
+        this.#stripAnchors = _stripAnchors;
     }
 
     setCaptureQuery(_captureQuery) {
-        this.captureQuery = _captureQuery;
+        this.#captureQuery = _captureQuery;
     }
 
     setCaptureQueryCaseSensitive(_bool) {
-        this.captureQueryCaseSensitive = !!_bool;
+        this.#captureQueryCaseSensitive = !!_bool;
     }
 
     setCaptureAnchor(_captureAnchor) {
-        this.captureAnchor = _captureAnchor;
+        this.#captureAnchor = _captureAnchor;
     }
 
     travel(_route){
         const index = {};
-        const { route, queryCapture, anchorCapture } = this._stripRoute(_route);
-        const uriArray = this._trimAndBreakRoute(route);
+        const { route, queryCapture, anchorCapture } = this.#stripRoute(_route);
+        const uriArray = this.#trimAndBreakRoute(route);
         const routeMatches = this.routeMap.reduce((_routeMatches,_view,_route)=>{
-            const routeArray = this._trimAndBreakRoute(_route);
+            const routeArray = this.#trimAndBreakRoute(_route);
             const routeObj = {
                 match:false,
                 weight:0,
                 tokensMatched:0
             };
             index[_route] = routeObj;
-            if(this._processRoute(routeObj,routeArray,ArcObject.copy(uriArray),false)){
+            if(this.#processRoute(routeObj,routeArray,ArcObject.copy(uriArray),false)){
                 _routeMatches[_route] = _view;
             }
             return _routeMatches;
         },new ArcObject);
 
         if(routeMatches.count()){
-            let routeData = this._resolveViews(routeMatches,index);
+            let routeData = this.#resolveViews(routeMatches,index);
             delete routeData.weight;
             delete routeData.tokensMatched;
             delete routeData.routeWeight;
 
-            if(this.captureQuery) {
+            if(this.#captureQuery) {
                 routeData.query = queryCapture;
             }
-            if(this.captureAnchor) {
+            if(this.#captureAnchor) {
                 routeData.anchor = anchorCapture;
             }
-            if(this.capturePath) {
+            if(this.#capturePath) {
                 routeData.path = _route;
             }
             return routeData;
@@ -122,18 +122,18 @@ class ArcRouter{
         return { match: false };
     }
 
-    _stripRoute(_route) {
+    #stripRoute(_route) {
         let route = _route;
         let queryCapture = false;
         let anchorCapture = false;
-        if(this.stripQueryParams) {
+        if(this.#stripQueryParams) {
             const queryRX = new ArcRegExp(/([^\?]*)\?{0,1}(.*)/);
             route = queryRX.exec(route)[1];
-            if(this.captureQuery) {
-                queryCapture = this._queryParse(_route)
+            if(this.#captureQuery) {
+                queryCapture = this.#queryParse(_route)
             }
         }
-        if(this.stripAnchors) {
+        if(this.#stripAnchors) {
             const anchorRX = new ArcRegExp(/([^\#]*)\#{0,1}([^\?]*)\?{0,1}(.*)/);
             const anchorParsed = anchorRX.exec(route);
             route = `${anchorParsed[1]}${anchorParsed[3] ? `?${anchorParsed[3]}` : ''}`;
@@ -144,11 +144,11 @@ class ArcRouter{
         return { route, queryCapture, anchorCapture }
     }
 
-    _queryParse(_route) {
+    #queryParse(_route) {
         let urlSplit = _route.split("?");
         urlSplit.shift();
         urlSplit = decodeURI(urlSplit.join("?"));
-        if(!this.captureQueryCaseSensitive){
+        if(!this.#captureQueryCaseSensitive){
             urlSplit = urlSplit.toLowerCase();
         }
         urlSplit = ArcObject.wrap(querystring.parse(urlSplit));
@@ -163,7 +163,7 @@ class ArcRouter{
         return urlSplit || {};
     }
 
-    _resolveViews(_routeMatches,_index){
+    #resolveViews(_routeMatches,_index){
         if(_routeMatches.count() === 1){
             return _routeMatches.reduce((_last,_matchedView,_route)=>{
                 _index[_route].match = _matchedView;
@@ -174,29 +174,29 @@ class ArcRouter{
 
         let matchedIndex = _routeMatches.reduce((_matchedViews,_matchedView,_route)=>{
             _index[_route].match = _matchedView;
-            _index[_route].routeWeight = this._getRouteWeight(_route);
+            _index[_route].routeWeight = this.#getRouteWeight(_route);
             _index[_route].route = _route;
             _matchedViews[_route] = _index[_route];
             return _matchedViews;
         },new ArcObject);
 
-        matchedIndex = this._reduceByHighestValue(matchedIndex,'tokensMatched');
+        matchedIndex = this.#reduceByHighestValue(matchedIndex,'tokensMatched');
         if(matchedIndex.count() === 1){
             return matchedIndex.pop();
         }
 
-        matchedIndex = this._reduceByHighestValue(matchedIndex,'routeWeight');
+        matchedIndex = this.#reduceByHighestValue(matchedIndex,'routeWeight');
         if(matchedIndex.count() === 1){
             return matchedIndex.pop();
         }
 
-        return this._reduceByHighestValue(matchedIndex,'weight').pop();
+        return this.#reduceByHighestValue(matchedIndex,'weight').pop();
     }
 
-    _trimAndBreakRoute(_str){
+    #trimAndBreakRoute(_str){
         const result = bindPattern.matchAndReplace(_str,'[B]/');
         const fullRoute = result.replaced;
-        const routeArray = this._filterEmptyValues(fullRoute.split('/'));
+        const routeArray = this.#filterEmptyValues(fullRoute.split('/'));
         if(result.matches.length){
             routeArray.forEach((_route,_index)=>{
                 if(bindPattern.exec(_route)){
@@ -208,7 +208,7 @@ class ArcRouter{
         return routeArray;
     }
 
-    _processRoute(_routeObj,_routeArray,_uriArray,_gobbleRemaining){
+    #processRoute(_routeObj,_routeArray,_uriArray,_gobbleRemaining){
         let match = false;
         let routeChunk = _routeArray.shift() || '';
         let route = _uriArray.shift() || '';
@@ -216,7 +216,7 @@ class ArcRouter{
         let storeAsArray = false;
         let patMatch = [];
 
-        if(this._isNumeric(routeChunk[0])){
+        if(this.#isNumeric(routeChunk[0])){
             const gobble = routeChunk[0];
             routeChunk = routeChunk.substr(1);
             if(_gobbleRemaining === false){
@@ -249,30 +249,30 @@ class ArcRouter{
         switch(replacedRoute.charAt(0)){
             //Explicit
             case '!':
-                increment = this._checkExplicit(_routeObj,route, key,storeAsArray);
+                increment = this.#checkExplicit(_routeObj,route, key,storeAsArray);
                 break;
 
             //Numeric
             case '#':
-                increment = this._checkNumeric(_routeObj,route,key,storeAsArray);
+                increment = this.#checkNumeric(_routeObj,route,key,storeAsArray);
                 break;
 
             //Wildcard
             case '*':
-                increment = this._checkWildCard(_routeObj,route,key,storeAsArray);
+                increment = this.#checkWildCard(_routeObj,route,key,storeAsArray);
                 break;
 
             //regX
             case ':':
                 patMatch = (new ArcRegExp(/([^\(]*)\(([^\)]*)\)/)).exec(key);
                 if(patMatch[1] && patMatch[2]){
-                    increment = this._checkRegX(_routeObj,route,patMatch[1],patMatch[2],storeAsArray);
+                    increment = this.#checkRegX(_routeObj,route,patMatch[1],patMatch[2],storeAsArray);
                 }
                 break;
 
             default:
                 //Treat as a single explicit...
-                increment = this._checkExplicit(_routeObj,route, replacedRoute,storeAsArray);
+                increment = this.#checkExplicit(_routeObj,route, replacedRoute,storeAsArray);
                 break;
         }
 
@@ -281,7 +281,7 @@ class ArcRouter{
                 if(recursive && _routeArray.length){
                     let temp1 = ArcObject.copy(_routeArray);
                     let temp2 = ArcObject.copy(_uriArray);
-                    if(!this._processRoute(_routeObj,temp1,temp2)){
+                    if(!this.#processRoute(_routeObj,temp1,temp2)){
                         _routeArray.unshift(routeChunk);
                     }
                     else {
@@ -308,7 +308,7 @@ class ArcRouter{
 
             match = true;
             if(_routeArray.length && _uriArray.length){
-                match = this._processRoute(_routeObj,_routeArray, _uriArray,_gobbleRemaining);
+                match = this.#processRoute(_routeObj,_routeArray, _uriArray,_gobbleRemaining);
             }
             else if(_routeArray.length && !_uriArray.length || !_routeArray.length && _uriArray.length){
                 match = false;
@@ -317,40 +317,40 @@ class ArcRouter{
         return match;
     }
 
-    _checkExplicit(_routeObj,_route,_key,_storeAsArray){
+    #checkExplicit(_routeObj,_route,_key,_storeAsArray){
         if(_route.toLowerCase() === _key.toLowerCase()){
             _routeObj.weight += 4;
             _routeObj.tokensMatched++;
-            return this._assignToKey(_routeObj,_key,_route,_storeAsArray);
+            return this.#assignToKey(_routeObj,_key,_route,_storeAsArray);
         }
         return false;
     }
 
-    _checkNumeric(_routeObj,_route,_key,_storeAsArray){
-        if(this._isNumeric(_route)){
+    #checkNumeric(_routeObj,_route,_key,_storeAsArray){
+        if(this.#isNumeric(_route)){
             _routeObj.weight += 1;
             _routeObj.tokensMatched++;
-            return this._assignToKey(_routeObj,_key,_route,_storeAsArray);
+            return this.#assignToKey(_routeObj,_key,_route,_storeAsArray);
         }
         return false;
     }
 
-    _checkWildCard(_routeObj,_route,_key,_storeAsArray){
+    #checkWildCard(_routeObj,_route,_key,_storeAsArray){
         _routeObj.weight += 0;
         _routeObj.tokensMatched++;
-        return this._assignToKey(_routeObj,_key,_route,_storeAsArray);
+        return this.#assignToKey(_routeObj,_key,_route,_storeAsArray);
     }
 
-    _checkRegX(_routeObj,_route,_key,_pattern,_storeAsArray){
+    #checkRegX(_routeObj,_route,_key,_pattern,_storeAsArray){
         if((new ArcRegExp(_pattern)).exec(_route)){
             _routeObj.weight += 2;
             _routeObj.tokensMatched++;
-            return this._assignToKey(_routeObj,_key,_route,_storeAsArray);
+            return this.#assignToKey(_routeObj,_key,_route,_storeAsArray);
         }
         return false;
     }
 
-    _assignToKey(_routeObj,_key,_val,_storeAsArray){
+    #assignToKey(_routeObj,_key,_val,_storeAsArray){
         if(_storeAsArray){
             let currentStack = (is(_routeObj[_key]) === 'array' ? _routeObj[_key] : []);
             currentStack.push(_val);
@@ -361,9 +361,9 @@ class ArcRouter{
         return true;
     }
 
-    _getRouteWeight(_routeStr){
+    #getRouteWeight(_routeStr){
         let weight = 0;
-        this._trimAndBreakRoute(_routeStr).forEach((_chunk)=>{
+        this.#trimAndBreakRoute(_routeStr).forEach((_chunk)=>{
             const rule = (_chunk.charAt(0) === _chunk.charAt(1) ? _chunk.substr(0,2) : _chunk.charAt(0));
             switch(rule){
                 case '!!':  weight += 6; break;
@@ -382,7 +382,7 @@ class ArcRouter{
         return weight;
     }
 
-    _filterEmptyValues(_array){
+    #filterEmptyValues(_array){
         return _array.reduce((_reduced,_val)=>{
             if(_val){
                 _reduced.push(_val);
@@ -391,11 +391,11 @@ class ArcRouter{
         },[]);
     }
 
-    _isNumeric(_val){
+    #isNumeric(_val){
         return (!isNaN(Number(_val)));
     }
 
-    _reduceByHighestValue(_index,_reduceByKey){
+    #reduceByHighestValue(_index,_reduceByKey){
         let highValue = 0;
         _index.forEach((_obj,_key)=>{
             if(_obj[_reduceByKey] > highValue){

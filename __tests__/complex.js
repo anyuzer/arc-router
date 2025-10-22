@@ -9,12 +9,14 @@ describe('ArcRouter complex tests',()=>{
         };
         TestRouter = new ArcRouter(routeMap);
         TestRouter.setCapturePath(false);
+        TestRouter.setCaptureQuery(false);
         const routeData = TestRouter.travel('/wallpaper/2016/australia/sydney/beach.jpg');
         expect(routeData).toEqual({
             'match':'wallpaper',
             'wallpaper':'wallpaper',
             'filePath':'2016/australia/sydney',
-            'fileName':'beach.jpg'
+            'fileName':'beach.jpg',
+            "route": "/!wallpaper/**filePath[/]/:fileName([^.]*.jpg)"
         });
     });
 

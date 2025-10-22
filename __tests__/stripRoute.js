@@ -9,7 +9,9 @@ describe('ArcRouter route stripping ',()=>{
     TestRouter.setCapturePath(false);
 
     it('Should return a routeData object that excludes the anchor and query params on the end variable',()=>{
+        TestRouter.setCaptureQuery(false);
         const routeData = TestRouter.travel('/uri1/complex#anchor?query=true');
+        delete routeData.route;
         expect(routeData).toEqual({
             'match':'matched',
             'test':'uri1',
@@ -20,6 +22,7 @@ describe('ArcRouter route stripping ',()=>{
     it('Should return a routeData object that excludes the anchor and leaves query params on the end variable',()=>{
         TestRouter.setStripQueryParams(false);
         const routeData = TestRouter.travel('/uri1/complex#anchor?query=true');
+        delete routeData.route;
         expect(routeData).toEqual({
             'match':'matched',
             'test':'uri1',
@@ -31,6 +34,7 @@ describe('ArcRouter route stripping ',()=>{
         TestRouter.setStripQueryParams(true);
         TestRouter.setStripAnchors(false);
         const routeData = TestRouter.travel('/uri1/complex#anchor?query=true');
+        delete routeData.route;
         expect(routeData).toEqual({
             'match':'matched',
             'test':'uri1',
@@ -44,6 +48,8 @@ describe('ArcRouter route stripping ',()=>{
         TestRouter.setCaptureAnchor(true);
         TestRouter.setCaptureQuery(true);
         const routeData = TestRouter.travel('/uri1/complex#anchor?query=true&notjson=[thing');
+        delete routeData.route;
+
         expect(routeData).toEqual({
             'match':'matched',
             'test':'uri1',
@@ -58,6 +64,7 @@ describe('ArcRouter route stripping ',()=>{
         TestRouter.setCaptureQuery(true);
         TestRouter.setCaptureQueryCaseSensitive(true);
         const routeData = TestRouter.travel('/uri1/complex?caseQuery1=true&caseQuery2=false');
+        delete routeData.route;
         expect(routeData).toEqual({
             'match':'matched',
             'test':'uri1',

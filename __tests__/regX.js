@@ -8,9 +8,11 @@ describe('ArcRouter regEx pattern matching',()=>{
     };
     TestRouter = new ArcRouter(routeMap);
     TestRouter.setCapturePath(false);
+    TestRouter.setCaptureQuery(false);
 
     it('Should return a routeData object with a match based on a single regExp match',()=>{
         const routeData = TestRouter.travel('/beach.jpg');
+        delete routeData.route;
         expect(routeData).toEqual({
             'match':'image',
             'fileName':'beach.jpg'
@@ -19,6 +21,7 @@ describe('ArcRouter regEx pattern matching',()=>{
 
     it('Should return a routeData object with a match based on a single regExp match',()=>{
         const routeData = TestRouter.travel('/beach.jpg/stupid.jpg');
+        delete routeData.route;
         expect(routeData).toEqual({
             'match':'images',
             'fileNames':['beach.jpg','stupid.jpg']

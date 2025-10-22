@@ -11,9 +11,11 @@ describe('ArcRouter wildcard pattern matching',()=>{
     };
     TestRouter = new ArcRouter(routeMap);
     TestRouter.setCapturePath(false);
+    TestRouter.setCaptureQuery(false);
 
     it('Should return a routeData object with a match based on a single wildcard route',()=>{
         const routeData = TestRouter.travel('/key');
+        delete routeData.route;
         expect(routeData).toEqual({
             'match':'anything',
             'anything':'key'
@@ -22,6 +24,7 @@ describe('ArcRouter wildcard pattern matching',()=>{
 
     it('Should return a routeData object with a match based on multipleWildcard routes',()=>{
         const routeData = TestRouter.travel('/yes/no');
+        delete routeData.route;
         expect(routeData).toEqual({
             'match':'anything2',
             'anything2':['yes','no']
@@ -31,6 +34,7 @@ describe('ArcRouter wildcard pattern matching',()=>{
 
     it('Should return a positive match pased on multiExplicit with trailing requirements',()=>{
         const routeData = TestRouter.travel('/yes/no/yes');
+        delete routeData.route;
         expect(routeData).toEqual({
             'match':'anything3',
             'anything3':['yes','no'],
@@ -40,6 +44,7 @@ describe('ArcRouter wildcard pattern matching',()=>{
 
     it('Should use an intModifier to control greed, and double match a wildcard',()=> {
         const routeData = TestRouter.travel('/yes/no/57');
+        delete routeData.route;
         expect(routeData).toEqual({
             "anything4": ["yes", "no"],
             "id": "57",
