@@ -12,8 +12,13 @@ describe('ArcRouter numeric pattern matching',()=>{
     TestRouter.setCapturePath(false);
     TestRouter.setCaptureQuery(false);
 
+    const TestRouterNoCast = new ArcRouter(routeMap);
+    TestRouterNoCast.setCastNumeric(false);
+    TestRouterNoCast.setCapturePath(false);
+    TestRouterNoCast.setCaptureQuery(false);
+
     it('Should return a routeData object with a match based on a single numeric route',()=>{
-        const routeData = TestRouter.travel('/1');
+        const routeData = TestRouterNoCast.travel('/1');
         delete routeData.route;
         expect(routeData).toEqual({
             'match':'numeric',
@@ -22,11 +27,47 @@ describe('ArcRouter numeric pattern matching',()=>{
     });
 
     it('Should return a routeData object with a match based on multipleExplicit routes',()=>{
-        const routeData = TestRouter.travel('/1/2');
+        const routeData = TestRouterNoCast.travel('/1/2');
         delete routeData.route;
         expect(routeData).toEqual({
             'match':'numeric2',
             'numeric2':['1','2']
+        });
+    });
+
+    it('Should return a false match on a multiExplicit with a trailing not met explicit',()=>{
+        const routeData = TestRouterNoCast.travel('/1/2/no');
+        delete routeData.route;
+        expect(routeData).toEqual({
+            'match':false
+        });
+    });
+
+    it('Should return a positive match pased on multiExplicit with trailing requirements',()=>{
+        const routeData = TestRouterNoCast.travel('/1/2/yes');
+        delete routeData.route;
+        expect(routeData).toEqual({
+            'match':'numeric3',
+            'numeric3':['1','2'],
+            'yes':'yes'
+        });
+    });
+
+    it('Should return a routeData object with a match based on a single numeric route',()=>{
+        const routeData = TestRouter.travel('/1');
+        delete routeData.route;
+        expect(routeData).toEqual({
+            'match':'numeric',
+            'numeric':1
+        });
+    });
+
+    it('Should return a routeData object with a match based on multipleExplicit routes',()=>{
+        const routeData = TestRouter.travel('/1/2');
+        delete routeData.route;
+        expect(routeData).toEqual({
+            'match':'numeric2',
+            'numeric2':[1,2]
         });
     });
 
@@ -43,7 +84,7 @@ describe('ArcRouter numeric pattern matching',()=>{
         delete routeData.route;
         expect(routeData).toEqual({
             'match':'numeric3',
-            'numeric3':['1','2'],
+            'numeric3':[1,2],
             'yes':'yes'
         });
     });

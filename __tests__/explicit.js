@@ -47,7 +47,7 @@ describe('ArcRouter explicit pattern matching',()=>{
         expect(routeData).toEqual({
             'match':'explicit3',
             'explicit3':['explicit3','explicit3'],
-            'yes':'1'
+            'yes':1
         });
     });
 

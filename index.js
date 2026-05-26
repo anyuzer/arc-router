@@ -45,11 +45,14 @@ class ArcRouter{
     #captureQueryCaseSensitive = true;
     #captureAnchor = false;
     #capturePath = true;
+    #castNumeric = true;
     constructor(_routeMap){
         if(_routeMap){
             this.setMap(_routeMap);
         }
     }
+
+    setCastNumeric(_bool) { this.#castNumeric = _bool;}
 
     setCapturePath(_bool) {
         this.#capturePath = _bool;
@@ -330,7 +333,7 @@ class ArcRouter{
         if(this.#isNumeric(_route)){
             _routeObj.weight += 1;
             _routeObj.tokensMatched++;
-            return this.#assignToKey(_routeObj,_key,_route,_storeAsArray);
+            return this.#assignToKey(_routeObj,_key,this.#castNumeric ? +_route :_route,_storeAsArray);
         }
         return false;
     }

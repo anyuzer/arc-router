@@ -74,4 +74,23 @@ describe('ArcRouter route stripping ',()=>{
         });
     });
 
+    it('Should return a routeData has query captured and case insensitive',()=>{
+        const InsensitiveTestRouter = new ArcRouter(routeMap);
+        InsensitiveTestRouter.setCapturePath(false);
+        InsensitiveTestRouter.setStripQueryParams(true);
+        InsensitiveTestRouter.setCaptureQuery(true);
+        InsensitiveTestRouter.setCaptureAnchor(true);
+        InsensitiveTestRouter.setCaptureQueryCaseSensitive(false);
+        const routeData = InsensitiveTestRouter.travel('/uri1/complex?caseQuery1=true&caseQuery2=false');
+        delete routeData.route;
+        expect(routeData).toEqual({
+            'match':'matched',
+            'test':'uri1',
+            'end': 'complex',
+            'query': { "casequery1": true, "casequery2": false },
+            'anchor': false
+        });
+    });
+
+
 });
